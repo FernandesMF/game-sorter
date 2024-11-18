@@ -69,7 +69,7 @@
         <mxCell id="Uuu9aDrbtGIYSMwyviMf-68" value="" style="group" vertex="1" connectable="0" parent="Uuu9aDrbtGIYSMwyviMf-14">
           <mxGeometry x="-10" width="250" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="Uuu9aDrbtGIYSMwyviMf-15" value="Categories" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-68">
+        <mxCell id="Uuu9aDrbtGIYSMwyviMf-15" value="Labels" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-68">
           <mxGeometry width="250" height="90" as="geometry">
             <mxRectangle width="80" height="30" as="alternateBounds" />
           </mxGeometry>
@@ -105,7 +105,7 @@
             <mxRectangle width="30" height="30" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Uuu9aDrbtGIYSMwyviMf-23" value="category_name char(50) NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-68">
+        <mxCell id="Uuu9aDrbtGIYSMwyviMf-23" value="label_description char(50) NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-68">
           <mxGeometry x="30" y="60" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>
@@ -204,7 +204,7 @@
         <mxCell id="Uuu9aDrbtGIYSMwyviMf-66" value="" style="group;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" connectable="0" parent="1">
           <mxGeometry x="370" y="190" width="250" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="Uuu9aDrbtGIYSMwyviMf-31" value="Games_categories" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-66">
+        <mxCell id="Uuu9aDrbtGIYSMwyviMf-31" value="Games_labels" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-66">
           <mxGeometry width="250" height="90" as="geometry">
             <mxRectangle width="80" height="30" as="alternateBounds" />
           </mxGeometry>
@@ -222,7 +222,7 @@
             <mxRectangle width="220" height="60" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Uuu9aDrbtGIYSMwyviMf-44" value="category_id int NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=1;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-66">
+        <mxCell id="Uuu9aDrbtGIYSMwyviMf-44" value="label_id int NOT NULL" style="shape=partialRectangle;overflow=hidden;connectable=1;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;" vertex="1" parent="Uuu9aDrbtGIYSMwyviMf-66">
           <mxGeometry x="30" y="60" width="220" height="30" as="geometry">
             <mxRectangle width="220" height="30" as="alternateBounds" />
           </mxGeometry>
