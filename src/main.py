@@ -1,33 +1,35 @@
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 import requests
+import motor
 from dotenv import dotenv_values
 from pymongo import MongoClient
 
 
-
-app = FastAPI()
-
 config = dotenv_values(".env")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.mongodb_client = MongoClient(config["ATLAS_URI"])
+    app.database = app.mongodb_client[config["DB_NAME"]]
+    print("Connected to the MongoDB database!")
+
+    yield
+
+    app.mongodb_client.close()
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
+@app.get("/")
 
-@app.on_event("startup")
-def startup_db_client():
-    app.mongodb_client = MongoClient(config["ATLAS_URI"])
-    app.database = app.mongodb_client[config["DB_NAME"]]
-    print("Connected to the MongoDB database!")
-    
-
-@app.on_event("shutdown")
-def shutdown_db_client():
-    app.mongodb_client.close()
-
+# python -m uvicorn main:app --reload
 
 # @app.get("/authtest")
 # async def authtest():
@@ -45,7 +47,3 @@ def shutdown_db_client():
 #         # An authorised request.
 #         r = s.get('A protected web page URL')
 #         print(r.text)
-
-    
-
-
