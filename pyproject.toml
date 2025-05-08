@@ -1,6 +1,6 @@
 [tool.black]
 line-length = 88
-target-version = ['py313']
+target-version = ['py312']
 include = '\.pyi?$'
 # 'extend-exclude' excludes files or directories in addition to the defaults
 extend-exclude = '''
@@ -12,3 +12,9 @@ extend-exclude = '''
   | scripts\/.* # exclude files in the 'scripts' directory
 )
 '''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_gitignore = true
+skip_glob = ["scripts"]

@@ -3,24 +3,23 @@
 # with logging (for debugs)
 # python -m uvicorn main:app --reload --log-config=log_conf.yaml
 
+import json
+import logging
 import os
 import time
 from contextlib import asynccontextmanager
-from typing import Literal, Annotated, Union, Any
+from typing import Annotated, Any, Literal, Union
 
 import certifi
+import motor
+import requests as r
+from dotenv import dotenv_values
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
-import requests as r
-import motor
-from dotenv import dotenv_values
-from pymongo import MongoClient
 from pydantic import BaseModel, Field
-import json
-import logging
+from pymongo import MongoClient
 
 from .models import Game
-
 
 config = dotenv_values(".env")
 db_vars = {}
