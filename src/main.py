@@ -10,6 +10,7 @@ from typing import Literal, Annotated, Union, Any
 
 import certifi
 from fastapi import FastAPI, Query
+from fastapi.responses import FileResponse
 import requests as r
 import motor
 from dotenv import dotenv_values
@@ -106,3 +107,10 @@ async def list_games(filter_params: Annotated[GamesFilterParams, Query()]) -> li
 #         # An authorised request.
 #         r = s.get('A protected web page URL')
 #         print(r.text)
+
+
+favicon_path = 'favicon.ico'
+
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse(favicon_path)
