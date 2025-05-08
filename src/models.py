@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class Label(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    id: str = Field(default_factory=uuid.uuid4, alias="_id", exclude=True)
     description: str = Field(...)
 
     class Config:
@@ -18,7 +18,7 @@ class Label(BaseModel):
 
 
 class Genre(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    id: str = Field(default_factory=uuid.uuid4, alias="_id", exclude=True)
     description: str = Field(...)
 
     class Config:
@@ -32,7 +32,7 @@ class Genre(BaseModel):
 
 
 class Game(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    id: str = Field(default_factory=uuid.uuid4, alias="_id", exclude=True)
     title: str = Field(...)
     metacritic_score: int = Field(...)
     must_play: bool = Field(...)

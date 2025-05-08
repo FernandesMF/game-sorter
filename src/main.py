@@ -1,14 +1,22 @@
+# run with:
+# python -m uvicorn main:app --reload
+# with logging (for debugs)
+# python -m uvicorn main:app --reload --log-config=log_conf.yaml
+
 import os
 import time
 from contextlib import asynccontextmanager
+from typing import Literal, Annotated, Union, Any
 
 import certifi
-from fastapi import FastAPI
-import requests
+from fastapi import FastAPI, Query
+import requests as r
 import motor
 from dotenv import dotenv_values
 from pymongo import MongoClient
+from pydantic import BaseModel, Field
 import json
+import logging
 
 from .models import Game
 
@@ -30,6 +38,7 @@ async def lifespan(app: FastAPI):
     db_vars["client"].close()
 
 
+logger = logging.getLogger(__name__)
 app = FastAPI(lifespan=lifespan)
 
 
@@ -39,23 +48,46 @@ async def root():
     return {"message": db_vars.__str__()}
 
 
-# python -m uvicorn main:app --reload
+class GamesFilterParams(BaseModel):
+    sort_by: Literal["title", "score"] = "score"
+    title: str | None = None
+    score: Annotated[int | None, Query(ge=0, le=100, default=None)]
+    labels: list[str] = []
+    genre: list[str] = []
+    must_play: bool | None = None
+    finished: bool | None = None
+    hot_picks: bool | None = None
+    fetch_error: bool | None = None
 
 
-#TODO implement filtering based on variable input fields
-@app.get("/games", response_description="List games with filter")#, response_model=list[Game])
-async def list_games(name: str=None):# -> list[Game]:
+#TODO implement sorting criterion for the results
+#TODO implement strict-er check of filter variables (to guard against wrong field names, for example)
+#TODO implement 'hot picks' filter logic
+@app.get("/games", response_description="List games with filter", response_model=list[Game])
+async def list_games(filter_params: Annotated[GamesFilterParams, Query()]) -> list[Game]:
 
-    results = []
-    filter = {}
-    if name:
-        filter.update({"name": name})
+    results: list[dict] = []
+    filter_: dict[str: Any] = {}
+    params_dict = filter_params.model_dump()
+    params_dict.pop("sort_by")
 
-    #TODO fix return type (type hints, cast results, etc)
-    # results = db_vars["collection"].find(filter)
-    results = list(db_vars["collection"].find({}))
-    
-    return results.__str__()
+    for param_name in params_dict.keys():
+
+        # if field is of bool type an equals none, dont include it in the filter
+        if filter_params.model_fields[param_name].annotation == Union[bool, None]:
+            if params_dict[param_name] == None:
+                continue
+        # for other types, dont include the value in the filter in case it has a boolean value of false
+        if not params_dict[param_name]:
+            continue
+        # for list fields, use 'in' operator to search for any value
+        if isinstance(params_dict[param_name], list):
+            filter_.update({param_name: {"$in": filter_params.model_dump()[param_name]}})
+            continue
+        filter_.update({param_name: filter_params.model_dump()[param_name]})
+ 
+    results = list(db_vars["collection"].find(filter_, {"_id": 0}))   #suppress the '_id' field
+    return results
 
 
 # @app.get("/authtest")
