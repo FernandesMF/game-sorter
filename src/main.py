@@ -1,35 +1,62 @@
 import os
+import time
 from contextlib import asynccontextmanager
 
+import certifi
 from fastapi import FastAPI
 import requests
 import motor
 from dotenv import dotenv_values
 from pymongo import MongoClient
+import json
+
+from .models import Game
 
 
 config = dotenv_values(".env")
+db_vars = {}
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.mongodb_client = MongoClient(config["ATLAS_URI"])
-    app.database = app.mongodb_client[config["DB_NAME"]]
+    global db_vars
+    db_vars["client"] = MongoClient(config["ATLAS_URI"], tlsCAFile=certifi.where())
+    db_vars["db"] = db_vars["client"][config["DB_NAME"]]
+    db_vars["collection"] = db_vars["db"].get_collection('games')
     print("Connected to the MongoDB database!")
 
     yield
 
-    app.mongodb_client.close()
+    db_vars["client"].close()
+
 
 app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+async def root():    
 
-@app.get("/")
+    return {"message": db_vars.__str__()}
+
 
 # python -m uvicorn main:app --reload
+
+
+#TODO implement filtering based on variable input fields
+@app.get("/games", response_description="List games with filter")#, response_model=list[Game])
+async def list_games(name: str=None):# -> list[Game]:
+
+    results = []
+    filter = {}
+    if name:
+        filter.update({"name": name})
+
+    #TODO fix return type (type hints, cast results, etc)
+    # results = db_vars["collection"].find(filter)
+    results = list(db_vars["collection"].find({}))
+    
+    return results.__str__()
+
 
 # @app.get("/authtest")
 # async def authtest():
