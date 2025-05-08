@@ -42,7 +42,7 @@ class Game(BaseModel):
     fetch_error: bool = Field(...)
 
     class Config:
-        populate_by_name = True  #allow_population_by_field_name
+        populate_by_name = True  # allow_population_by_field_name
         schema_extra = {
             "example": {
                 "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
@@ -51,12 +51,18 @@ class Game(BaseModel):
                 "must_play": True,
                 "finished": False,
                 "genres": [
-                    {"_id": "066de609-b04a-4b30-b46c-32537c7f1f6f", "description": "survival-crafting",}
+                    {
+                        "_id": "066de609-b04a-4b30-b46c-32537c7f1f6f",
+                        "description": "survival-crafting",
+                    }
                 ],
                 "labels": [
-                    {"_id": "066de609-b04a-4b30-b46c-32537c7f1f6g", "description": "my custom collection",}
+                    {
+                        "_id": "066de609-b04a-4b30-b46c-32537c7f1f6g",
+                        "description": "my custom collection",
+                    }
                 ],
-                "fetch_error": False,            
+                "fetch_error": False,
             }
         }
 

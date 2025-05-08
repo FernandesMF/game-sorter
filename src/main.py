@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
     global db_vars
     db_vars["client"] = MongoClient(config["ATLAS_URI"], tlsCAFile=certifi.where())
     db_vars["db"] = db_vars["client"][config["DB_NAME"]]
-    db_vars["collection"] = db_vars["db"].get_collection('games')
+    db_vars["collection"] = db_vars["db"].get_collection("games")
     print("Connected to the MongoDB database!")
 
     yield
@@ -44,7 +44,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/")
-async def root():    
+async def root():
 
     return {"message": db_vars.__str__()}
 
@@ -61,14 +61,18 @@ class GamesFilterParams(BaseModel):
     fetch_error: bool | None = None
 
 
-#TODO implement sorting criterion for the results
-#TODO implement strict-er check of filter variables (to guard against wrong field names, for example)
-#TODO implement 'hot picks' filter logic
-@app.get("/games", response_description="List games with filter", response_model=list[Game])
-async def list_games(filter_params: Annotated[GamesFilterParams, Query()]) -> list[Game]:
+# TODO implement sorting criterion for the results
+# TODO implement strict-er check of filter variables (to guard against wrong field names, for example)
+# TODO implement 'hot picks' filter logic
+@app.get(
+    "/games", response_description="List games with filter", response_model=list[Game]
+)
+async def list_games(
+    filter_params: Annotated[GamesFilterParams, Query()],
+) -> list[Game]:
 
     results: list[dict] = []
-    filter_: dict[str: Any] = {}
+    filter_: dict[str:Any] = {}
     params_dict = filter_params.model_dump()
     params_dict.pop("sort_by")
 
@@ -83,11 +87,15 @@ async def list_games(filter_params: Annotated[GamesFilterParams, Query()]) -> li
             continue
         # for list fields, use 'in' operator to search for any value
         if isinstance(params_dict[param_name], list):
-            filter_.update({param_name: {"$in": filter_params.model_dump()[param_name]}})
+            filter_.update(
+                {param_name: {"$in": filter_params.model_dump()[param_name]}}
+            )
             continue
         filter_.update({param_name: filter_params.model_dump()[param_name]})
- 
-    results = list(db_vars["collection"].find(filter_, {"_id": 0}))   #suppress the '_id' field
+
+    results = list(
+        db_vars["collection"].find(filter_, {"_id": 0})
+    )  # suppress the '_id' field
     return results
 
 
@@ -109,8 +117,9 @@ async def list_games(filter_params: Annotated[GamesFilterParams, Query()]) -> li
 #         print(r.text)
 
 
-favicon_path = 'favicon.ico'
+favicon_path = "favicon.ico"
 
-@app.get('/favicon.ico', include_in_schema=False)
+
+@app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse(favicon_path)
