@@ -12,7 +12,7 @@ from dotenv import dotenv_values
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 
 from .models import Game
 
@@ -54,7 +54,6 @@ class GamesFilterParams(BaseModel):
     fetch_error: bool | None = None
 
 
-# TODO implement sorting criterion for the results
 # TODO implement strict-er check of filter variables (to guard against wrong field names, for example)
 # TODO implement 'hot picks' filter logic
 @app.get(
@@ -67,6 +66,7 @@ async def list_games(
     results: list[dict] = []
     filter_: dict[str:Any] = {}
     params_dict = filter_params.model_dump()
+    sort_field = params_dict["sort_by"]
     params_dict.pop("sort_by")
 
     for param_name in params_dict.keys():
@@ -87,7 +87,7 @@ async def list_games(
         filter_.update({param_name: filter_params.model_dump()[param_name]})
 
     results = list(
-        db_vars["collection"].find(filter_, {"_id": 0})
+        db_vars["collection"].find(filter_, {"_id": 0}, sort=[(sort_field, DESCENDING)])
     )  # suppress the '_id' field
     return results
 
