@@ -18,3 +18,7 @@ profile = "black"
 line_length = 88
 skip_gitignore = true
 skip_glob = ["scripts"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ['E501']

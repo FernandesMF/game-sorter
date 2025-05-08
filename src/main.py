@@ -3,20 +3,15 @@
 # with logging (for debugs)
 # python -m uvicorn main:app --reload --log-config=log_conf.yaml
 
-import json
 import logging
-import os
-import time
 from contextlib import asynccontextmanager
 from typing import Annotated, Any, Literal, Union
 
 import certifi
-import motor
-import requests as r
 from dotenv import dotenv_values
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from pymongo import MongoClient
 
 from .models import Game
@@ -27,7 +22,6 @@ db_vars = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global db_vars
     db_vars["client"] = MongoClient(config["ATLAS_URI"], tlsCAFile=certifi.where())
     db_vars["db"] = db_vars["client"][config["DB_NAME"]]
     db_vars["collection"] = db_vars["db"].get_collection("games")
@@ -79,7 +73,7 @@ async def list_games(
 
         # if field is of bool type an equals none, dont include it in the filter
         if filter_params.model_fields[param_name].annotation == Union[bool, None]:
-            if params_dict[param_name] == None:
+            if params_dict[param_name] is None:
                 continue
         # for other types, dont include the value in the filter in case it has a boolean value of false
         if not params_dict[param_name]:
