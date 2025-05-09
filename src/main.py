@@ -57,7 +57,6 @@ class GamesFilterParams(BaseModel):
     )  # forbid different fields (than the ones we are setting)
 
 
-# TODO implement 'hot picks' filter logic
 @app.get(
     "/games", response_description="List games with filter", response_model=list[Game]
 )
