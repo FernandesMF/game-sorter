@@ -72,12 +72,12 @@ async def list_games(
 
     for param_name in params_dict.keys():
 
-        # if field is of bool type an equals none, dont include it in the filter
+        # if field is of bool type and is unset, dont include it in the filter
         if filter_params.model_fields[param_name].annotation == Union[bool, None]:
             if params_dict[param_name] is None:
                 continue
         # for other types, dont include the value in the filter in case it has a boolean value of false
-        if not params_dict[param_name]:
+        elif not params_dict[param_name]:
             continue
         # for list fields, use 'in' operator to search for any value
         if isinstance(params_dict[param_name], list):
