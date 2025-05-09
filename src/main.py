@@ -11,8 +11,8 @@ import certifi
 from dotenv import dotenv_values
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
-from pymongo import MongoClient, DESCENDING
+from pydantic import BaseModel, ConfigDict
+from pymongo import DESCENDING, MongoClient
 
 from .models import Game
 
@@ -52,9 +52,11 @@ class GamesFilterParams(BaseModel):
     finished: bool | None = None
     hot_picks: bool | None = None
     fetch_error: bool | None = None
+    model_config = ConfigDict(
+        extra="forbid"
+    )  # forbid different fields (than the ones we are setting)
 
 
-# TODO implement strict-er check of filter variables (to guard against wrong field names, for example)
 # TODO implement 'hot picks' filter logic
 @app.get(
     "/games", response_description="List games with filter", response_model=list[Game]
