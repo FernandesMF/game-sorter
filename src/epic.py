@@ -19,10 +19,16 @@ router = APIRouter()
 )
 async def egs_not_logged() -> bool:
 
-    msg = subprocess.run(
-        ["legendary", "status"], capture_output=True
-    ).stdout.splitlines()[0]
-    match_: re.Match | None = re.match(r"Epic account: (.*)", msg.decode())
-    acc: str | None = match_.groups()[0] if match_ else None
+    msg: str = (
+        subprocess.run(["legendary", "status"], capture_output=True)
+        .stdout.splitlines()[0]
+        .decode()
+    )
+    match_: re.Match | None = re.match(r"Epic account: (.*)", msg)
+    if match_ is None:
+        raise RuntimeError(
+            f"Unexpected content from 'legendary status' result. Wanted 'Epic account: <acc>', got: {msg}"
+        )
+    acc: str = match_.groups()[0]
 
-    return (acc is not None) and (acc != "<not logged in>")
+    return acc != "<not logged in>"
