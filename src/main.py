@@ -14,8 +14,6 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict
 from pymongo import DESCENDING, MongoClient
 
-from .models import Game
-
 config: dict[str, str | None] = dotenv_values(".env")
 db_vars: dict[str, Any] = {}
 
@@ -58,7 +56,9 @@ class GamesFilterParams(BaseModel):
 
 
 @app.get(
-    "/games", response_description="List games with filter", response_model=list[Game]
+    "/games",
+    response_description="Filter and list game entries",
+    response_model=list[dict[str, str | int | bool | list[str]]],
 )
 async def list_games(
     filter_params: Annotated[GamesFilterParams, Query()],
@@ -88,8 +88,12 @@ async def list_games(
         filter_.update({param_name: filter_params.model_dump()[param_name]})
 
     results = list(
-        db_vars["collection"].find(filter_, {"_id": 0}, sort=[(sort_field, DESCENDING)])
-    )  # suppress the '_id' field
+        db_vars["collection"].find(
+            filter_,
+            {"_id": 0},
+            sort=[(sort_field, DESCENDING)],
+        )  # suppress the '_id' field from the game entries
+    )
     return results
 
 
