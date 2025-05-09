@@ -14,6 +14,8 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict
 from pymongo import DESCENDING, MongoClient
 
+from src import epic
+
 config: dict[str, str | None] = dotenv_values(".env")
 db_vars: dict[str, Any] = {}
 
@@ -96,6 +98,8 @@ async def list_games(
     )
     return results
 
+
+app.include_router(epic.router, prefix="/epic")
 
 # @app.get("/authtest")
 # async def authtest():
