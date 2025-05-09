@@ -16,8 +16,8 @@ from pymongo import DESCENDING, MongoClient
 
 from .models import Game
 
-config = dotenv_values(".env")
-db_vars = {}
+config: dict[str, str|None] = dotenv_values(".env")
+db_vars: dict[str, Any] = {}
 
 
 @asynccontextmanager
@@ -62,10 +62,10 @@ class GamesFilterParams(BaseModel):
 )
 async def list_games(
     filter_params: Annotated[GamesFilterParams, Query()],
-) -> list[Game]:
+) -> list[dict[str, str|int|bool|list[str]]]:
 
     results: list[dict] = []
-    filter_: dict[str:Any] = {}
+    filter_: dict[str, Any] = {}
     params_dict = filter_params.model_dump()
     sort_field = params_dict["sort_by"]
     params_dict.pop("sort_by")
