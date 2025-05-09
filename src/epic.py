@@ -59,3 +59,31 @@ async def authenticate_with_code(auth_code: str):
         return f"Authentication did not work, please try again: {msg.stderr.decode()}"
 
     return "Authentication successful!"
+
+
+# TODO decide what to return
+# TODO remove endpoint after the whole auth is implemented
+@router.get("/games_list")
+async def get_epic_games_list() -> list[str]:
+
+    titles_list: list = []
+    regex = re.compile(r"(.*) \(App name: .*")
+
+    raw_list: list[str] = (
+        subprocess.run(["legendary", "list"], capture_output=True)
+        .stdout.decode()
+        .splitlines()
+    )
+
+    for line in raw_list:
+        if line.startswith(
+            " * "
+        ):  # remove dlcs and messages about other platforms (lines not starting with '*')
+            match_ = regex.match(line)
+            if match_:
+                titles_list.append(
+                    match_.groups()[0]
+                )  # remove other info besides title
+                # TODO log entries without match and check them later
+
+    return titles_list[:10]
