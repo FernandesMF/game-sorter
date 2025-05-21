@@ -6,12 +6,6 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-# """"
-# Please  open the following URL: https://legendary.gl/epiclogin
-# Please enter the "authorizationCode" value from the JSON response
-# """
-
-
 @router.get("")
 async def weblogin_flow():
 
@@ -61,7 +55,6 @@ async def authenticate_with_code(auth_code: str):
     return "Authentication successful!"
 
 
-# TODO decide what to return
 # TODO remove endpoint after the whole auth is implemented
 @router.get("/games_list")
 async def get_epic_games_list() -> list[str]:
@@ -82,8 +75,7 @@ async def get_epic_games_list() -> list[str]:
             match_ = regex.match(line)
             if match_:
                 titles_list.append(
-                    match_.groups()[0]
+                    match_.groups()[0][3:]
                 )  # remove other info besides title
-                # TODO log entries without match and check them later
 
-    return titles_list[:10]
+    return titles_list
