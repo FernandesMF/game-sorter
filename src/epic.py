@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 @router.get("")
-async def weblogin_flow():
+async def weblogin_flow() -> str :
 
     is_logged: bool = await check_egs_auth()
     if not is_logged:
@@ -16,9 +16,10 @@ async def weblogin_flow():
             "and enter the 'authorizationCode' value from the JSON response "
             "in a POST request to '/epic/authcode'"
         )
+    
+    return "EGS authentication is working fine!"
 
 
-# TODO remove endpoint after the whole auth is implemented
 @router.get(
     "/status",
     response_description="Checks current state of authentication in epic store",
@@ -55,7 +56,6 @@ async def authenticate_with_code(auth_code: str):
     return "Authentication successful!"
 
 
-# TODO remove endpoint after the whole auth is implemented
 @router.get("/games_list")
 async def get_epic_games_list() -> list[str]:
 

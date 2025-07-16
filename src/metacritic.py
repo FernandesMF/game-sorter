@@ -29,7 +29,6 @@ async def request_metacritic_data(title: str) -> dict:
     url = METACRITIC_SEARCH_TEMPLATE.substitute(
         game_title=standardize_title(title)
     )
-    print(url)
     resp:Response = get(url)
     resp.raise_for_status()
     return resp.json()

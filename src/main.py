@@ -5,6 +5,7 @@
 
 import logging
 from contextlib import asynccontextmanager
+from time import sleep
 from typing import Annotated, Any, Literal, Union
 
 import certifi
@@ -13,8 +14,11 @@ from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, ConfigDict
 from pymongo import DESCENDING, MongoClient
+from pymongo.collection import Collection
 
 from src import epic, metacritic
+from src.metacritic import MatchValidationError
+from src.models import Game
 
 config: dict[str, str | None] = dotenv_values(".env")
 db_vars: dict[str, Any] = {}
@@ -41,6 +45,34 @@ async def root():
 
     return {"message": db_vars.__str__()}
 
+
+#TODO check error handling
+#TODO check duplicate entry avoidance
+@app.get("/ingest")
+async def data_ingest_flow():
+
+    if not await epic.check_egs_auth():
+        return "Auth with EGS is not correctly set up. Make a request to '/epic' and solve any issues."
+
+    title_list = await epic.get_epic_games_list()
+    problems = list[tuple]
+
+    for t in title_list:
+        try :
+            data = await metacritic.get_metacritic_data(t)
+        except Exception as e:
+            logger.info(f"Problem processing title {t}, skipping")
+            problems.append (t, e)
+            continue
+
+        game_entry = Game(title=t, **data)
+
+        collection: Collection = db_vars["collection"]
+        if not collection.find_one({'title': t}, {"_id": 0}):
+            collection.insert_one(document=dict(game_entry))
+
+    return f"Ingestion flow complete! Problems with the following titles: {problems}"
+    
 
 class GamesFilterParams(BaseModel):
     sort_by: Literal["title", "score"] = "score"
@@ -102,27 +134,8 @@ async def list_games(
 app.include_router(epic.router, prefix="/epic")
 app.include_router(metacritic.router, prefix="/metacritic")
 
-# @app.get("/authtest")
-# async def authtest():
-
-#     payload = {
-#         'inUserName': os.environ["username"],
-#         'inUserPass': os.environ["password"],
-#     }
-
-#     with requests.Session() as s:
-#         p = s.post(, data=payload)
-#         # print the HTML returned or something more intelligent to see if it's a successful login page.
-#         print(p.text)
-
-#         # An authorised request.
-#         r = s.get('A protected web page URL')
-#         print(r.text)
-
-
-favicon_path = "favicon.ico"
-
 
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
+    favicon_path = "favicon.ico"
     return FileResponse(favicon_path)

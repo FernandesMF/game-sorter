@@ -4,17 +4,17 @@ from pydantic import BaseModel, Field
 
 
 class Game(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, alias="_id", exclude=True)
+    # id: uuid.UUID '= Field(default_factory=uuid.uuid4, alias="_id", exclude=True)
     title: str = Field(...)
-    metacritic_score: int = Field(...)
-    must_play: bool = Field(...)
-    finished: bool = Field(...)
-    genres: list[str] = Field(...)
-    labels: list[str] = Field(...)
-    fetch_error: bool = Field(...)
+    metacritic_score: int = Field(default=None)
+    must_play: bool = Field(default=None)
+    finished: bool = Field(default=None)
+    genres: list[str] = Field(default=None)
+    labels: list[str] = Field(default=None)
+    fetch_error: bool = Field(default=None)
 
     class Config:
-        populate_by_name = True  # allow_population_by_field_name
+        validate_by_name = True  # allow_population_by_field_name
         json_schema_extra = {
             "example": {
                 "_id": "066de609-b04a-4b30-b46c-32537c7f1f6e",
