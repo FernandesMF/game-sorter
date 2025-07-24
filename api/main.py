@@ -12,13 +12,14 @@ import certifi
 from dotenv import dotenv_values
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
 from pymongo import DESCENDING, MongoClient
 from pymongo.collection import Collection
 
-from src import epic, metacritic
-from src.metacritic import MatchValidationError
-from src.models import Game
+from api import epic, metacritic
+from api.metacritic import MatchValidationError
+from api.models import Game
 
 config: dict[str, str | None] = dotenv_values(".env")
 db_vars: dict[str, Any] = {}
@@ -139,3 +140,11 @@ app.include_router(metacritic.router, prefix="/metacritic")
 async def favicon():
     favicon_path = "favicon.ico"
     return FileResponse(favicon_path)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[config.get("ALLOWED_ORIGINS", "http://localhost:3000")],
+)
+
+# app.include_router(api.router)
