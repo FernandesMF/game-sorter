@@ -1,0 +1,131 @@
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  height: calc(100vh - 60px);
+  width: 250px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.sidebar.collapsed {
+  transform: translateX(-250px);
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.hamburger {
+  width: 20px;
+  height: 16px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #495057;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .hamburger span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.sidebar.collapsed .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+.sidebar.collapsed .hamburger span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.menu-section {
+  margin-bottom: 24px;
+}
+
+.menu-header {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6c757d;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.submenu {
+  margin-left: 20px;
+  border-left: 2px solid #dee2e6;
+  padding-left: 10px;
+}
+
+.menu-item {
+  color: #495057;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.9375rem;
+}
+
+.submenu-item {
+  padding: 6px 12px;
+  font-size: 0.95em;
+}
+
+.menu-item:hover {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.menu-item.active {
+  background-color: #e9ecef;
+  color: #212529;
+  font-weight: 500;
+}
+
+/* Collapsed state styles */
+.sidebar.collapsed .menu-header,
+.sidebar.collapsed .menu-item {
+  text-align: center;
+  padding: 8px 4px;
+}
+
+.sidebar.collapsed .menu-header {
+  font-size: 0.75rem;
+  margin-bottom: 4px;
+} 

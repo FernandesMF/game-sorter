@@ -93,11 +93,11 @@ class GamesFilterParams(BaseModel):
 @app.get(
     "/games",
     response_description="Filter and list game entries",
-    response_model=list[dict[str, str | int | bool | list[str]]],
+    response_model=list[Game],
 )
 async def list_games(
     filter_params: Annotated[GamesFilterParams, Query()],
-) -> list[dict[str, str | int | bool | list[str]]]:
+) -> list[Game]:
 
     results: list[dict] = []
     filter_: dict[str, Any] = {}
@@ -129,7 +129,8 @@ async def list_games(
             sort=[(sort_field, DESCENDING)],
         )  # suppress the '_id' field from the game entries
     )
-    return results
+    # Convert MongoDB documents to Game instances
+    return [Game(**doc) for doc in results]
 
 
 app.include_router(epic.router, prefix="/epic")
@@ -144,7 +145,10 @@ async def favicon():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[config.get("ALLOWED_ORIGINS", "http://localhost:3000")],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 # app.include_router(api.router)

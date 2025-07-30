@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -6,12 +7,12 @@ from pydantic import BaseModel, Field
 class Game(BaseModel):
     # id: uuid.UUID '= Field(default_factory=uuid.uuid4, alias="_id", exclude=True)
     title: str = Field(...)
-    metacritic_score: int = Field(default=None)
-    must_play: bool = Field(default=None)
-    finished: bool = Field(default=None)
-    genres: list[str] = Field(default=None)
-    labels: list[str] = Field(default=None)
-    fetch_error: bool = Field(default=None)
+    metacritic_score: Optional[int] = Field(default=None)
+    must_play: Optional[bool] = Field(default=None)
+    finished: Optional[bool] = Field(default=None)
+    genres: Optional[list[str]] = Field(default=None)
+    labels: Optional[list[str]] = Field(default=None)
+    fetch_error: Optional[bool] = Field(default=None)
 
     class Config:
         validate_by_name = True  # allow_population_by_field_name
