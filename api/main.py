@@ -5,11 +5,10 @@
 
 import logging
 from contextlib import asynccontextmanager
-from time import sleep
+from os import getenv
 from typing import Annotated, Any, Literal, Union
 
 import certifi
-from dotenv import dotenv_values
 from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,18 +16,16 @@ from pydantic import BaseModel, ConfigDict
 from pymongo import DESCENDING, MongoClient
 from pymongo.collection import Collection
 
-from api import epic, metacritic
-from api.metacritic import MatchValidationError
-from api.models import Game
+import epic, metacritic
+from models import Game
 
-config: dict[str, str | None] = dotenv_values(".env")
 db_vars: dict[str, Any] = {}
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db_vars["client"] = MongoClient(config["ATLAS_URI"], tlsCAFile=certifi.where())
-    db_vars["db"] = db_vars["client"][config["DB_NAME"]]
+    db_vars["client"] = MongoClient(getenv("ATLAS_URI", ''), tlsCAFile=certifi.where())
+    db_vars["db"] = db_vars["client"][getenv("DB_NAME", '')]
     db_vars["collection"] = db_vars["db"].get_collection("games")
     print("Connected to the MongoDB database!")
 
@@ -63,7 +60,7 @@ async def data_ingest_flow():
             data = await metacritic.get_metacritic_data(t)
         except Exception as e:
             logger.info(f"Problem processing title {t}, skipping")
-            problems.append (t, e)
+            problems.append((t, e))  #FIXME this seems wrong...
             continue
 
         game_entry = Game(title=t, **data)

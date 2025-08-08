@@ -1,0 +1,24 @@
+FROM quay.io/fedora/fedora:42
+
+LABEL \
+    name="Game Sorter API" \
+    description="Backend to the Game Sorter project" \
+    summary="Game Sorter API"
+
+ENV REQUESTS_CA_BUNDLE="/etc/pki/tls/certs/ca-bundle.crt"
+
+RUN dnf update -y && \
+    dnf install -y --setopt=tsflags=nodocs python3-pip&& \
+    dnf clean all -y && rm -fR /var/cache/dnf
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+
+RUN update-ca-trust extract && \
+    pip install --no-cache-dir --upgrade -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
